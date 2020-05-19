@@ -1,12 +1,7 @@
 [gui]
 
 [color]
-        diff = yes
-        status = yes
-        branch = yes
-        interactive = yes
-        ui = yes
-        pages = yes
+	ui = always
 
 [core]
         #autocrlf = input
