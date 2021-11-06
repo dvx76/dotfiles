@@ -1,3 +1,6 @@
+[init]
+  defaultBranch = main
+
 [gui]
 
 [color]
@@ -7,7 +10,7 @@
         #autocrlf = input
         preloadindex = true
         fscache = true
-	pager = cat
+	#pager = cat
 
 [alias]
         l = log --color --pretty=format:'%Cred%h%Creset %Cblue%<(18)%an%Creset %Cgreen%<(12)%cr%Creset - %C(yellow)%d%Creset %s'
@@ -23,8 +26,15 @@
 [push]
 	default = simple
 
+[pull]
+	ff = only
+
+[commit]
+	gpgsign = true
+
+[gpg]
+	program = gpg
+
 # use separate file for username / github token / etc
 [include]
   path = ~/.gitconfig.local
-[pull]
-	ff = only
