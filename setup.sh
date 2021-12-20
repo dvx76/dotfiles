@@ -6,6 +6,7 @@ declare -A FILES=(
     ["gitconfig"]="~/.gitconfig"
     ["tmux.conf"]="~/.tmux.conf"
     ["vimrc"]="~/.vimrc"
+    ["zshrc"]="~/.zshrc"
     )
 
 for NAME in "${!FILES[@]}"; do
