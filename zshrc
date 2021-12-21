@@ -28,7 +28,3 @@ export GPG_TTY=$(tty)
 #eval "$(pyenv virtualenv-init -)"
 
 unsetopt share_history
-
-PROMPT="$PROMPT$ "
-
-
