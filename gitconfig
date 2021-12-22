@@ -24,6 +24,7 @@
         rekt = !git add . && git commit --amend --no-edit && git push -f
         find-merge = "!sh -c 'commit=$0 && branch=${1:-HEAD} && (git rev-list $commit..$branch --ancestry-path | cat -n; git rev-list $commit..$branch --first-parent | cat -n) | sort -k2 -s | uniq -f1 -d | sort -n | tail -1 | cut -f2'"
         show-merge = "!sh -c 'merge=$(git find-merge $0 $1) && [ -n \"$merge\" ] && git show $merge'"
+        fixup = "!git log -n 50 --pretty=format:'%h %s' --no-merges | fzf | cut -c -7 | xargs -o git commit --fixup"
 
 [gc]
         auto = 256
@@ -39,6 +40,9 @@
 
 [gpg]
 	program = gpg
+
+[rebase]
+  autosquash = true
 
 # use separate file for username / github token / etc
 [include]
