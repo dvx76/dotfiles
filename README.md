@@ -3,9 +3,9 @@
 ## Install
 
 ```
-git clone git@github.com:fdevaux/dotfiles.git
+git clone git@github.com:fdevaux/dotfiles.git .dotfiles
 cd dotfiles
-./setup.sh
+stow */
 
 cat > ~/.gitconfig.local <<EOF
 [user]
@@ -18,3 +18,4 @@ EOF
 
 * Update .zshrc
 * Add vscode settings?
+
