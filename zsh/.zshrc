@@ -46,6 +46,12 @@ zsh_add_plugin "zsh-users/zsh-syntax-highlighting"
 export ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets pattern cursor)
 
 # Non-zsh stuff
+
+# ls deluxe
+if command -v lsd &> /dev/null; then
+    alias ls=lsd
+fi
+
 export EDITOR=vim
 export GPG_TTY=$(tty)
 export PATH="$HOME/.poetry/bin:$PATH"
