@@ -32,6 +32,8 @@ function zsh_add_plugin() {
 #autoload -U promptinit && promptinit
 #prompt spaceship
 
+autoload -U compinit && compinit
+
 # History 
 HISTSIZE=1000
 SAVEHIST=1000
@@ -49,7 +51,7 @@ export ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets pattern cursor)
 
 # ls deluxe
 if command -v lsd &> /dev/null; then
-    alias ls=lsd
+    alias ls="lsd -l"
 fi
 
 export EDITOR=vim
