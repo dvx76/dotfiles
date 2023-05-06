@@ -1,3 +1,10 @@
+# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
+# Initialization code that may require console input (password prompts, [y/n]
+# confirmations, etc.) must go above this block; everything else may go below.
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
+
 # .zshrc
 # Inspiration and sources:
 # - https://github.com/Mach-OS/Machfile
@@ -27,21 +34,18 @@ function zsh_add_plugin() {
     fi
 }
 
-# Spaceship prompt. Replaced by zsh_add_plugin
-#fpath=( "${ZDOTDIR}/functions" $fpath )
-#autoload -U promptinit && promptinit
-#prompt spaceship
-
 autoload -U compinit && compinit
 
-# History 
+# History
 HISTSIZE=1000
 SAVEHIST=1000
 mkdir -p $HOME/.cache/zsh
 HISTFILE=$HOME/.cache/zsh/history
 
 # Plugins (zsh-syntax-highlighting must be last)
-zsh_add_plugin "spaceship-prompt/spaceship-prompt" "spaceship.zsh"
+zsh_add_plugin "romkatv/powerlevel10k" "powerlevel10k.zsh-theme"
+# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 zsh_add_plugin "zsh-users/zsh-autosuggestions"
 zsh_add_plugin "zsh-users/zsh-syntax-highlighting"
 
@@ -55,5 +59,6 @@ if command -v lsd &> /dev/null; then
 fi
 
 export EDITOR=vim
-export GPG_TTY=$(tty)
+#export GPG_TTY=$(tty)
+export GPG_TTY=$TTY
 export PATH="$HOME/.poetry/bin:$PATH"
