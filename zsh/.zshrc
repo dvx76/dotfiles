@@ -44,8 +44,8 @@ HISTFILE=$HOME/.cache/zsh/history
 
 # Plugins (zsh-syntax-highlighting must be last)
 zsh_add_plugin "romkatv/powerlevel10k" "powerlevel10k.zsh-theme"
-# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
-[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+# To customize prompt, run `p10k configure` or edit ~/.config/zsh/.p10k.zsh.
+[[ ! -f ~/.config/zsh/.p10k.zsh ]] || source ~/.config/zsh/.p10k.zsh
 zsh_add_plugin "zsh-users/zsh-autosuggestions"
 zsh_add_plugin "zsh-users/zsh-syntax-highlighting"
 
@@ -62,3 +62,5 @@ export EDITOR=vim
 #export GPG_TTY=$(tty)
 export GPG_TTY=$TTY
 export PATH="$HOME/.poetry/bin:$PATH"
+
+[[ ! -f ~/.config/.zshrc.local ]] || source ~/.zshrc.local
