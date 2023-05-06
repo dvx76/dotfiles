@@ -15,6 +15,7 @@
         #autocrlf = input
         preloadindex = true
         fscache = true
+        excludesFile = ~/.gitignore
 	#pager = cat
 
 [alias]
@@ -47,4 +48,3 @@
 # use separate file for username / github token / etc
 [include]
   path = ~/.gitconfig.local
-
