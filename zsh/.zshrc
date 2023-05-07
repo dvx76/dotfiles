@@ -51,6 +51,13 @@ zsh_add_plugin "zsh-users/zsh-syntax-highlighting"
 
 export ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets pattern cursor)
 
+# CTRL-Left/Right
+bindkey "^[[1;5D" backward-word
+bindkey "^[[1;5C" forward-word
+bindkey "^R" history-incremental-search-backward
+
+[[ ! -f ~/.config/.zshrc.local ]] || source ~/.zshrc.local
+
 # Non-zsh stuff
 
 # ls deluxe
@@ -63,4 +70,3 @@ export EDITOR=vim
 export GPG_TTY=$TTY
 export PATH="$HOME/.poetry/bin:$PATH"
 
-[[ ! -f ~/.config/.zshrc.local ]] || source ~/.zshrc.local
