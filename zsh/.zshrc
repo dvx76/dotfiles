@@ -47,6 +47,7 @@ zsh_add_plugin "romkatv/powerlevel10k" "powerlevel10k.zsh-theme"
 # To customize prompt, run `p10k configure` or edit ~/.config/zsh/.p10k.zsh.
 [[ ! -f ~/.config/zsh/.p10k.zsh ]] || source ~/.config/zsh/.p10k.zsh
 zsh_add_plugin "zsh-users/zsh-autosuggestions"
+zsh_add_plugin "joshskidmore/zsh-fzf-history-search"
 zsh_add_plugin "zsh-users/zsh-syntax-highlighting"
 
 export ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets pattern cursor)
@@ -54,7 +55,8 @@ export ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets pattern cursor)
 # CTRL-Left/Right
 bindkey "^[[1;5D" backward-word
 bindkey "^[[1;5C" forward-word
-bindkey "^R" history-incremental-search-backward
+# Replaced by zsh-fzf-history-search if fzf is installed
+fzf --version >/dev/null 2>&1 || bindkey "^R" history-incremental-search-backward
 
 [[ ! -f ~/.config/.zshrc.local ]] || source ~/.zshrc.local
 
