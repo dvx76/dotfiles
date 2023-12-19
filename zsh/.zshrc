@@ -58,13 +58,16 @@ bindkey "^[[1;5C" forward-word
 # Replaced by zsh-fzf-history-search if fzf is installed
 fzf --version >/dev/null 2>&1 || bindkey "^R" history-incremental-search-backward
 
-[[ ! -f ~/.config/.zshrc.local ]] || source ~/.zshrc.local
+[[ ! -f ~/.zshrc.local ]] || source ~/.zshrc.local
 
 # Non-zsh stuff
 
+# less -r = keep color
+alias less="less -r"
+
 # ls deluxe
 if command -v lsd &> /dev/null; then
-    alias ls="lsd -l"
+    alias ls="lsd --color always"
 fi
 
 export EDITOR=vim
