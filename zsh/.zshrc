@@ -9,6 +9,20 @@ fi
 # Inspiration and sources:
 # - https://github.com/Mach-OS/Machfile
 
+autoload -U compinit && compinit
+
+[[ ! -f ~/.zshrc.local ]] || . ~/.zshrc.local
+
+# CTRL-Left/Right
+bindkey "^[[1;5D" backward-word
+bindkey "^[[1;5C" forward-word
+## Option-Left/Right
+#bindkey '^[^[[D' backward-word
+#bindkey '^[^[[C' forward-word
+
+# Replaced by zsh-fzf-history-search if fzf is installed
+#fzf --version >/dev/null 2>&1 || bindkey "^R" history-incremental-search-backward
+
 export ZDOTDIR=$HOME/.config/zsh
 
 # Debug slowness. Run zprof command
@@ -18,6 +32,7 @@ export ZDOTDIR=$HOME/.config/zsh
 function zsh_add_file() {
     [ -f "$ZDOTDIR/$1" ] && source "$ZDOTDIR/$1"
 }
+
 
 function zsh_add_plugin() {
     PLUGIN_NAME=$(echo $1 | cut -d "/" -f 2)
@@ -34,7 +49,6 @@ function zsh_add_plugin() {
     fi
 }
 
-autoload -U compinit && compinit
 
 # History
 HISTSIZE=1000
@@ -47,18 +61,11 @@ zsh_add_plugin "romkatv/powerlevel10k" "powerlevel10k.zsh-theme"
 # To customize prompt, run `p10k configure` or edit ~/.config/zsh/.p10k.zsh.
 [[ ! -f ~/.config/zsh/.p10k.zsh ]] || source ~/.config/zsh/.p10k.zsh
 zsh_add_plugin "zsh-users/zsh-autosuggestions"
-zsh_add_plugin "joshskidmore/zsh-fzf-history-search"
+#zsh_add_plugin "joshskidmore/zsh-fzf-history-search"
 zsh_add_plugin "zsh-users/zsh-syntax-highlighting"
 
 export ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets pattern cursor)
-
-# CTRL-Left/Right
-bindkey "^[[1;5D" backward-word
-bindkey "^[[1;5C" forward-word
-# Replaced by zsh-fzf-history-search if fzf is installed
-fzf --version >/dev/null 2>&1 || bindkey "^R" history-incremental-search-backward
-
-[[ ! -f ~/.zshrc.local ]] || source ~/.zshrc.local
+typeset -g POWERLEVEL9K_KUBECONTEXT_SHOW_ON_COMMAND='kubectl'
 
 # Non-zsh stuff
 
