@@ -9,13 +9,17 @@ fi
 # Inspiration and sources:
 # - https://github.com/Mach-OS/Machfile
 
+[[ ! /opt/homebrew/bin/brew ]] || eval "$(/opt/homebrew/bin/brew shellenv)"
+
 autoload -U compinit && compinit
 
 [[ ! -f ~/.zshrc.local ]] || . ~/.zshrc.local
 
-# CTRL-Left/Right
-bindkey "^[[1;5D" backward-word
-bindkey "^[[1;5C" forward-word
+bindkey "^[[1;5D" backward-word # ctrl-left
+bindkey "^[[1;5C" forward-word # ctrl-right
+bindkey '^k' up-history
+bindkey '^j' down-history
+bindkey '^l' autosuggest-accept
 ## Option-Left/Right
 #bindkey '^[^[[D' backward-word
 #bindkey '^[^[[C' forward-word
