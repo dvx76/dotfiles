@@ -9,7 +9,7 @@ fi
 # Inspiration and sources:
 # - https://github.com/Mach-OS/Machfile
 
-[[ ! /opt/homebrew/bin/brew ]] || eval "$(/opt/homebrew/bin/brew shellenv)"
+[[ ! -x /opt/homebrew/bin/brew ]] || eval "$(/opt/homebrew/bin/brew shellenv)"
 
 autoload -U compinit && compinit
 
@@ -93,7 +93,7 @@ export PATH="$HOME/.poetry/bin:$HOME/.local/bin:$PATH"
 #
 export PYENV_ROOT="$HOME/.pyenv"
 [[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
-eval "$(pyenv init -)"
+[[ -d $PYENV_ROOT/bin ]] && eval "$(pyenv init -)"
 
 # Load pyenv-virtualenv automatically by adding
 # the following to ~/.bashrc:

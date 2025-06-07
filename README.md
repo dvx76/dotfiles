@@ -13,9 +13,3 @@ cat > ~/.gitconfig.local <<EOF
         email = ...
 EOF
 ```
-
-## TODO
-
-* Update .zshrc
-* Add vscode settings?
-
