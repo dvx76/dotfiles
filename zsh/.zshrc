@@ -12,6 +12,15 @@ fi
 [[ ! -x /opt/homebrew/bin/brew ]] || eval "$(/opt/homebrew/bin/brew shellenv)"
 
 autoload -U compinit && compinit
+# Fix completions with uv. https://github.com/astral-sh/uv/issues/8432#issuecomment-2867318195
+_uv_run_mod() {
+  if [[ "$words[2]" == "run" && "$words[CURRENT]" != -* ]]; then
+    _arguments '*:filename:_files'
+  else
+    _uv "$@"
+  fi
+}
+compdef _uv_run_mod uv
 
 [[ ! -f ~/.zshrc.local ]] || . ~/.zshrc.local
 
