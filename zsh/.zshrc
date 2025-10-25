@@ -10,6 +10,7 @@ fi
 # - https://github.com/Mach-OS/Machfile
 
 [[ ! -x /opt/homebrew/bin/brew ]] || eval "$(/opt/homebrew/bin/brew shellenv)"
+export HOMEBREW_NO_ENV_HINTS=1
 
 autoload -U compinit && compinit
 # Fix completions with uv. https://github.com/astral-sh/uv/issues/8432#issuecomment-2867318195
