@@ -138,3 +138,52 @@ function fsb() {
     git checkout "$(echo "$branch" | sed "s/.* //" | sed "s#remotes/[^/]*/##")"
 }
 
+eval "$(zoxide init zsh)"
+
+# bun completions
+[ -s "/Users/dfabrice/.bun/_bun" ] && source "/Users/dfabrice/.bun/_bun"
+
+# bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
+
+# Timers. Requires:
+# - https://github.com/caarlos0/timer
+# - https://github.com/charmbracelet/gum
+# - https://github.com/julienXX/terminal-notifier
+ttimer() {
+  tmux split-window -vb -l 3 "timer -f $1" \; last-pane
+}
+
+pom() {
+    local split=$POMO_SPLIT
+    if [[ -z "$split" ]]; then
+        split=$(gum choose "25/5" "50/10" "all done" --header "Choose a pomodoro split.")
+    fi
+
+    case $split in
+        '25/5')
+            work="25m"
+            break="5m"
+            ;;
+        '50/10')
+            work="50m"
+            break="10m"
+            ;;
+        'all done')
+            return
+            ;;
+    esac
+
+    tmux split-window -vb -l 4 \
+        "timer -f $work && \
+         terminal-notifier -message 'Pomodoro' -title 'Work Timer is up! Take a Break 😊' && \
+         gum confirm --no-show-help 'Ready for a break?' && \
+         timer -f $break && \
+         terminal-notifier -message 'Pomodoro' -title 'Break is over! Get back to work 😬'" \
+        \; last-pane
+}
+
+if [[ -f "$HOME/Library/Application Support/Code/User/globalStorage/ms-vscode.powershell/shellIntegration.zsh" ]]; then
+    source "$HOME/Library/Application Support/Code/User/globalStorage/ms-vscode.powershell/shellIntegration.zsh"
+fi
