@@ -49,7 +49,3 @@
 # use separate file for username / github token / etc
 [include]
   path = ~/.gitconfig.local
-[user]
-	email = fabrice.devaux@gmail.com
-	name = Fabrice Devaux
-
