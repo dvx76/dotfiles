@@ -138,8 +138,6 @@ function fsb() {
     git checkout "$(echo "$branch" | sed "s/.* //" | sed "s#remotes/[^/]*/##")"
 }
 
-eval "$(zoxide init zsh)"
-
 # bun completions
 [ -s "/Users/dfabrice/.bun/_bun" ] && source "/Users/dfabrice/.bun/_bun"
 
@@ -183,7 +181,3 @@ pom() {
          terminal-notifier -message 'Pomodoro' -title 'Break is over! Get back to work 😬'" \
         \; last-pane
 }
-
-if [[ -f "$HOME/Library/Application Support/Code/User/globalStorage/ms-vscode.powershell/shellIntegration.zsh" ]]; then
-    source "$HOME/Library/Application Support/Code/User/globalStorage/ms-vscode.powershell/shellIntegration.zsh"
-fi
