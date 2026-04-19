@@ -181,3 +181,5 @@ pom() {
          terminal-notifier -message 'Pomodoro' -title 'Break is over! Get back to work 😬'" \
         \; last-pane
 }
+
+command -v atuin >/dev/null 2>&1 && eval "$(atuin init zsh)"
