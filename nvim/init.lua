@@ -166,6 +166,10 @@ vim.o.confirm = true
 
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
+--  Don't store change commands into the register so change->paste works
+vim.keymap.set('n', 'c', '"_c')
+vim.keymap.set('n', 'C', '"_C')
+vim.keymap.set('n', 'cc', '"_cc')
 
 -- Clear highlights on search when pressing <Esc> in normal mode
 --  See `:help hlsearch`
