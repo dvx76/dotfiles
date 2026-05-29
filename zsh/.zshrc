@@ -101,9 +101,9 @@ export PATH="$HOME/.poetry/bin:$HOME/.local/bin:$PATH"
 # ~/.bash_profile if it exists, otherwise ~/.profile (for login shells)
 # and ~/.bashrc (for interactive shells) :
 #
-export PYENV_ROOT="$HOME/.pyenv"
-[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
-[[ -d $PYENV_ROOT/bin ]] && eval "$(pyenv init -)"
+#export PYENV_ROOT="$HOME/.pyenv"
+#[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
+#[[ -d $PYENV_ROOT/bin ]] && eval "$(pyenv init -)"
 
 # Load pyenv-virtualenv automatically by adding
 # the following to ~/.bashrc:
