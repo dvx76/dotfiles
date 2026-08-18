@@ -44,7 +44,12 @@ bindkey '^l' autosuggest-accept
 # Replaced by zsh-fzf-history-search if fzf is installed
 #fzf --version >/dev/null 2>&1 || bindkey "^R" history-incremental-search-backward
 
-export ZDOTDIR=$HOME/.config/zsh
+# Keep ZDOTDIR unexported: if children (tmux panes via default-shell,
+# nested shells) inherit it, zsh reads $ZDOTDIR/.zshrc instead of ~/.zshrc
+# and skips the rest of this config (p10k prompt breaks, falls back to %m%#).
+# Setting it as a plain shell variable still resolves $ZDOTDIR/... for plugins
+# and compdump within this session.
+ZDOTDIR=$HOME/.config/zsh
 
 # Debug slowness. Run zprof command
 # zmodload zsh/zprof
