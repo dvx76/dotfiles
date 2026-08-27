@@ -181,3 +181,5 @@ pom() {
          terminal-notifier -message 'Pomodoro' -title 'Break is over! Get back to work 😬'" \
         \; last-pane
 }
+
+if command -v wt >/dev/null 2>&1; then eval "$(command wt config shell init zsh)"; fi
