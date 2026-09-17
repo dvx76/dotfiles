@@ -11,17 +11,25 @@ fi
 
 [[ ! -x /opt/homebrew/bin/brew ]] || eval "$(/opt/homebrew/bin/brew shellenv)"
 export HOMEBREW_NO_ENV_HINTS=1
+export PATH="$HOME/.poetry/bin:$HOME/.local/bin:$PATH"
 
 autoload -U compinit && compinit
-# Fix completions with uv. https://github.com/astral-sh/uv/issues/8432#issuecomment-2867318195
-_uv_run_mod() {
-  if [[ "$words[2]" == "run" && "$words[CURRENT]" != -* ]]; then
-    _arguments '*:filename:_files'
-  else
-    _uv "$@"
-  fi
-}
-compdef _uv_run_mod uv
+if command -v uv >/dev/null 2>&1; then
+  # Load uv's completion function before the custom `uv run` wrapper below.
+  eval "$(uv generate-shell-completion zsh)"
+  # Fix completions with uv. https://github.com/astral-sh/uv/issues/8432#issuecomment-2867318195
+  _uv_run_mod() {
+    if [[ "$words[2]" == "run" && "$words[CURRENT]" != -* ]]; then
+      _arguments '*:filename:_files'
+    else
+      _uv "$@"
+    fi
+  }
+  compdef _uv_run_mod uv
+fi
+
+# fzf --zsh binds Ctrl-R, so load it before local overrides such as Atuin.
+if command -v fzf &>/dev/null; then eval "$(fzf --zsh)"; fi
 
 [[ ! -f ~/.zshrc.local ]] || . ~/.zshrc.local
 
@@ -94,7 +102,6 @@ fi
 export EDITOR=vim
 #export GPG_TTY=$(tty)
 export GPG_TTY=$TTY
-export PATH="$HOME/.poetry/bin:$HOME/.local/bin:$PATH"
 
 # Load pyenv automatically by appending
 # the following to
@@ -183,4 +190,3 @@ pom() {
 }
 
 if command -v wt &>/dev/null; then eval "$(command wt config shell init zsh)"; fi
-if command -v fzf &>/dev/null; then eval "$(fzf --zsh)"; fi
