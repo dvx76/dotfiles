@@ -31,7 +31,6 @@ fi
 # fzf --zsh binds Ctrl-R, so load it before local overrides such as Atuin.
 if command -v fzf &>/dev/null; then eval "$(fzf --zsh)"; fi
 
-[[ ! -f ~/.zshrc.local ]] || . ~/.zshrc.local
 
 bindkey "^[[1;5D" backward-word # ctrl-left
 bindkey "^[[1;5C" forward-word # ctrl-right
@@ -145,6 +144,99 @@ function fsb() {
     git checkout "$(echo "$branch" | sed "s/.* //" | sed "s#remotes/[^/]*/##")"
 }
 
+# Fetch a GitLab merge request into a uniquely named Worktrunk worktree.
+function mrwt() {
+    emulate -L zsh
+    setopt local_options pipefail
+
+    if (( $# != 1 )); then
+        print -u2 "Usage: mrwt <GitLab merge request URL>"
+        return 2
+    fi
+
+    local mr_url="$1"
+    local canonical_url="${mr_url%%\?*}"
+    canonical_url="${canonical_url%%\#*}"
+    local mr_host url_iid
+    local -a match
+
+    if [[ "$canonical_url" =~ '^https?://([^/]+)/.+/-/merge_requests/([0-9]+)/?$' ]]; then
+        mr_host="$match[1]"
+        url_iid="$match[2]"
+    else
+        print -u2 "mrwt: expected a GitLab merge request URL"
+        return 2
+    fi
+
+    for dependency in git glab jq wt; do
+        if (( ! $+commands[$dependency] )); then
+            print -u2 "mrwt: required command not found: $dependency"
+            return 1
+        fi
+    done
+
+    if ! command git rev-parse --show-toplevel >/dev/null 2>&1; then
+        print -u2 "mrwt: run this from a Git repository"
+        return 1
+    fi
+
+    if (( ! $+functions[wt] )); then
+        print -u2 "mrwt: Worktrunk zsh integration is not loaded"
+        return 1
+    fi
+
+    local mr_metadata mr_iid source_branch source_project_id
+    if ! mr_metadata="$(GITLAB_HOST="$mr_host" command glab mr view \
+        "$canonical_url" --output json)"; then
+        print -u2 "mrwt: could not read MR metadata"
+        return 1
+    fi
+
+    mr_iid="$(command jq -r '.iid // empty' <<< "$mr_metadata")"
+    source_branch="$(command jq -r '.source_branch // empty' <<< "$mr_metadata")"
+    source_project_id="$(command jq -r '.source_project_id // empty' <<< "$mr_metadata")"
+
+    if [[ "$mr_iid" != "$url_iid" || -z "$source_branch" ||
+        ! "$source_project_id" =~ '^[0-9]+$' ]]; then
+        print -u2 "mrwt: incomplete or inconsistent MR metadata"
+        return 1
+    fi
+
+    local project_metadata fetch_url
+    if ! project_metadata="$(command glab api --hostname "$mr_host" \
+        --output json "projects/$source_project_id")"; then
+        print -u2 "mrwt: could not read source project metadata"
+        return 1
+    fi
+
+    fetch_url="$(command jq -r \
+        '.ssh_url_to_repo // .http_url_to_repo // empty' <<< "$project_metadata")"
+
+    if [[ -z "$fetch_url" ]]; then
+        print -u2 "mrwt: source project has no usable clone URL"
+        return 1
+    fi
+
+    local local_branch="mr-${mr_iid}-${source_branch}"
+    if ! command git check-ref-format --branch "$local_branch" >/dev/null 2>&1; then
+        print -u2 "mrwt: generated branch name is invalid: $local_branch"
+        return 1
+    fi
+
+    print -r -- "Fetching !${mr_iid} (${source_branch}) from ${fetch_url}"
+    if ! command git fetch --no-tags "$fetch_url" "refs/heads/$source_branch"; then
+        print -u2 "mrwt: fetch failed"
+        return 1
+    fi
+
+    if ! command git rev-parse --verify 'FETCH_HEAD^{commit}' >/dev/null 2>&1; then
+        print -u2 "mrwt: fetch did not produce a commit in FETCH_HEAD"
+        return 1
+    fi
+
+    wt switch --create "$local_branch" --base FETCH_HEAD
+}
+
 # bun completions
 [ -s "/Users/dfabrice/.bun/_bun" ] && source "/Users/dfabrice/.bun/_bun"
 
@@ -190,3 +282,6 @@ pom() {
 }
 
 if command -v wt &>/dev/null; then eval "$(command wt config shell init zsh)"; fi
+if command -v fzf &>/dev/null; then eval "$(fzf --zsh)"; fi
+
+[[ ! -f ~/.zshrc.local ]] || . ~/.zshrc.local
