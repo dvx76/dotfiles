@@ -8,11 +8,8 @@ sudo apt install stow
 
 git clone git@gitlab.com:dvx76/dotfiles.git .dotfiles
 cd .dotfiles
-mkdir -p ~/.config/nvim ~/.config/worktrunk
-stow nvim --target="$HOME/.config/nvim"
-stow worktrunk --target="$HOME/.config/worktrunk"
 stow zsh git tmux vim
-stow --no-folding herdr
+stow --no-folding nvim worktrunk herdr
 
 cat > ~/.gitconfig.local <<EOF
 [user]
@@ -20,6 +17,10 @@ cat > ~/.gitconfig.local <<EOF
         email = ...
 EOF
 ```
+
+All packages mirror paths under `$HOME`, so no explicit Stow target is needed.
+Use `--no-folding` for the `.config` packages to keep runtime state outside the
+repo. Back up any existing config files at those paths before running Stow.
 
 Only Worktrunk's `config.toml` is managed here; approvals and other local state
 remain outside the repo. Its Python setup hook requires `uv` and the local
