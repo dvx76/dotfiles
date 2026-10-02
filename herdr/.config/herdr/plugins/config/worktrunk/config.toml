@@ -1,0 +1,2 @@
+# Show the worktree picker without adding a temporary split pane.
+picker_placement = "popup"

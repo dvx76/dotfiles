@@ -1,0 +1,6 @@
+# Herdr runtime state and downloaded plugins are machine-specific.
+/herdr/.config/herdr/.plugins.lock
+/herdr/.config/herdr/herdr-server.log*
+/herdr/.config/herdr/plugins.json
+/herdr/.config/herdr/session.json
+/herdr/.config/herdr/plugins/github/
