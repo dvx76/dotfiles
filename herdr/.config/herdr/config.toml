@@ -1,5 +1,15 @@
+onboarding = false
 [ui]
 show_agent_labels_on_pane_borders = false
+agent_panel_sort = "priority"
+
+[keys]
+goto = ["prefix+g", "cmd+p"]
+
+# Agents lens (navigator-agents-lens build): flat, attention-sorted agents
+# list across machines; the array keeps the default prefix+a active.
+# cmd+k is freed from Ghostty's clear_screen;
+agent_picker = ["prefix+a", "cmd+k"]
 
 [[keys.command]]
 key = "prefix+space"
@@ -48,3 +58,6 @@ key = "prefix+shift+i"
 type = "plugin_action"
 command = "mr-worktree.open"
 description = "GitLab MR: open Worktrunk checkout"
+
+[ui.toast]
+delivery = "off"
