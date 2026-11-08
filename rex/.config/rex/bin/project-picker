@@ -1,0 +1,61 @@
+#!/usr/bin/env bash
+# Fuzzy-pick a git repo anywhere under $PROJECTS_ROOT (default ~/dev) and open
+# it as a Rex session named after the repo folder. If a session with that name
+# already exists, switch to it instead of creating a duplicate.
+#
+# Launched by the `project_picker` action in ~/.config/rex/init.lua, which
+# passes the client (the Rex app) that should show the session in REX_CLIENT.
+set -euo pipefail
+shopt -s nullglob
+
+# Panes started from a Lua action don't get the login shell's PATH.
+export PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
+
+root="${PROJECTS_ROOT:-$HOME/dev}"
+
+# Walk the tree with shell globs (no per-folder process spawns). A folder
+# holding .git (a dir, or a file for worktrees) is a repo: print it and don't
+# descend further. Hidden folders, symlinks and dependency/build folders are
+# skipped, since they're slow to walk and never hold projects.
+walk() {
+  local d
+  for d in "$1"/*/; do
+    d=${d%/}
+    [[ -L $d ]] && continue
+    case ${d##*/} in
+      node_modules | Pods | vendor | build | dist | target | __pycache__ | DerivedData) continue ;;
+    esac
+    if [[ -e $d/.git ]]; then
+      printf '%s\n' "${d#"$root"/}"
+    else
+      walk "$d"
+    fi
+  done
+}
+
+repos=$(walk "$root" | sort -f)
+
+project=$(
+  fzf --prompt='project> ' --height=100% --layout=reverse --border=none \
+    --preview "ls -A '$root'/{} | head -50" --preview-window=right,50% \
+    <<<"$repos"
+) || exit 0 # Esc / Ctrl-C: just close the picker
+
+dir="$root/$project"
+
+# Name the session after the folder. If several repos share that folder name,
+# prefix the parent folder (e.g. github/hello) so each gets its own session.
+label=${project##*/}
+if [[ $(grep -c -E "(^|/)${label//./\\.}\$" <<<"$repos") -gt 1 && $project == */* ]]; then
+  parent=${project%/*}
+  label="${parent##*/}/$label"
+fi
+
+session_id=$(rex ls --json | jq -r --arg l "$label" \
+  'first(.sessions[] | select(.label == $l) | .session_id) // empty')
+
+if [[ -z "$session_id" ]]; then
+  session_id=$(rex new "$label" -c "$dir" --json | jq -er '.session_id')
+fi
+
+rex do session.select session_id="$session_id" >/dev/null

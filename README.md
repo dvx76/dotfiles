@@ -8,7 +8,7 @@ sudo apt install stow
 
 git clone git@gitlab.com:dvx76/dotfiles.git .dotfiles
 cd .dotfiles
-stow zsh git tmux vim
+stow zsh git tmux vim rex
 stow --no-folding nvim worktrunk herdr claude
 
 cat > ~/.gitconfig.local <<EOF
@@ -49,3 +49,11 @@ when the tool is not installed. Skills are not tracked: third-party skills are
 installed per machine with `npx skills`, and app-provided skills (rex, tldraw)
 come from their apps. Claude Code writes some settings (e.g. `/effort`) back
 to `settings.json`, so review those diffs before committing.
+
+## Rex
+
+The `rex` package links the whole `~/.config/rex` directory (no
+`--no-folding`), since Rex keeps its runtime state elsewhere. It holds
+`init.lua` and the `bin/project-picker` script it launches (bound to
+`cmd+shift+o`). The picker requires `fzf` and `jq`, and looks for git repos
+under `$PROJECTS_ROOT` (default `~/dev`).
