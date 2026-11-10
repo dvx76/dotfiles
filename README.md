@@ -10,6 +10,7 @@ git clone git@gitlab.com:dvx76/dotfiles.git .dotfiles
 cd .dotfiles
 stow zsh git tmux vim rex
 stow --no-folding nvim worktrunk herdr claude
+stow --no-folding swiftbar   # macOS only
 
 cat > ~/.gitconfig.local <<EOF
 [user]
@@ -57,3 +58,32 @@ The `rex` package links the whole `~/.config/rex` directory (no
 `init.lua` and the `bin/project-picker` script it launches (bound to
 `cmd+shift+o`). The picker requires `fzf` and `jq`, and looks for git repos
 under `$PROJECTS_ROOT` (default `~/dev`).
+
+## SwiftBar (macOS)
+
+The `swiftbar` package manages the SwiftBar plugins in
+`~/.config/swiftbar/plugins` plus their helpers in `bin/` and `lib/`. Use
+`--no-folding` so anything built or cached at runtime stays outside the repo.
+SwiftBar stores its plugin folder in its own preferences, so point it there
+once:
+
+```
+brew install --cask swiftbar
+brew install jq uv
+defaults write com.ameba.SwiftBar PluginDirectory ~/.config/swiftbar/plugins
+```
+
+- `claude-usage.2m.sh`: Claude 5-hour and weekly usage, colored by level, with
+  time to reset. It reads Claude Code's login from the keychain (nothing is
+  stored in the repo) and calls the same undocumented endpoint as `/usage`, so
+  log in to Claude Code first. It falls back to the cache the status line
+  script writes. The colored title is drawn by `bin/menubar-text`, compiled
+  from `menubar-text.swift` on first run (needs `swiftc`, e.g. from
+  `xcode-select --install`).
+- `logi-battery.10m.sh` / `logi-keyboard.10m.sh`: Logitech Lightspeed mouse
+  (HID++) and Bluetooth keyboard battery. They run `lib/battery_menu.py` with
+  `uv`, which installs `hidapi` on first run. Set `BT_KEYBOARD_MATCH` to match
+  a keyboard other than the default `NuPhy`.
+- `bluetooth_inspector.10m.rb`, `mtop.5s.sh`, `zoom*.1s.scpt`: third-party
+  plugins, using the system Ruby, bash and osascript.
+

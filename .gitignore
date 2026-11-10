@@ -7,3 +7,12 @@
 
 # Re-include the Claude Code package (ignored globally via ~/.gitignore).
 !/claude/.claude/
+
+# macOS Finder metadata.
+.DS_Store
+
+# SwiftBar: the menu bar renderer is compiled from bin/menubar-text.swift on
+# first run; keep build output out of the repo.
+/swiftbar/.config/swiftbar/bin/menubar-text
+/swiftbar/.config/swiftbar/bin/menubar-text.tmp
+__pycache__/
