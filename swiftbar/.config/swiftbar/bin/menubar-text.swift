@@ -1,9 +1,24 @@
 // Renders colored menu bar text to a base64 PNG for SwiftBar's image= parameter.
 // Usage: menubar-text <Dark|Light> <text> <hex|-> [<text> <hex|-> ...]
 // "-" means the normal menu bar text color; "~" means the dimmed secondary color.
+//        menubar-text --appearance
+// Prints the menu bar's actual appearance (Dark or Light). Since macOS 26 the menu
+// bar follows the wallpaper rather than the system theme, so a Light system can
+// have a dark menu bar. Found by briefly adding an invisible status item.
 import AppKit
 
 let args = Array(CommandLine.arguments.dropFirst())
+if args.first == "--appearance" {
+    NSApplication.shared.setActivationPolicy(.prohibited)
+    let item = NSStatusBar.system.statusItem(withLength: 0)
+    // The button only gets the menu bar's appearance once it has been placed.
+    RunLoop.current.run(until: Date().addingTimeInterval(0.2))
+    let match = item.button?.effectiveAppearance.bestMatch(from: [.aqua, .darkAqua])
+    NSStatusBar.system.removeStatusItem(item)
+    guard let match else { exit(1) }
+    print(match == .darkAqua ? "Dark" : "Light")
+    exit(0)
+}
 guard args.count >= 3, (args.count - 1) % 2 == 0 else {
     FileHandle.standardError.write("usage: menubar-text <Dark|Light> <text> <hex|-|~> ...\n".data(using: .utf8)!)
     exit(1)

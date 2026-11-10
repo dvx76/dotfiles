@@ -74,13 +74,20 @@ stale=0; [ "$age" -gt 1800 ] && stale=1
 
 # --- Colors ------------------------------------------------------------------
 # green < 40 ≤ lime < 60 ≤ yellow < 70 ≤ orange < 80 ≤ red
+# Bright shades for dark backgrounds, deeper ones that stay readable on light.
+# hex_for <percent> <Dark|Light>
 hex_for() {
-  if   [ "$1" -lt 40 ]; then echo "#34C759"
-  elif [ "$1" -lt 60 ]; then echo "#A3D139"
-  elif [ "$1" -lt 70 ]; then echo "#FFCC00"
-  elif [ "$1" -lt 80 ]; then echo "#FF9500"
-  else                       echo "#FF3B30"
+  local i
+  if   [ "$1" -lt 40 ]; then i=0
+  elif [ "$1" -lt 60 ]; then i=1
+  elif [ "$1" -lt 70 ]; then i=2
+  elif [ "$1" -lt 80 ]; then i=3
+  else                       i=4
   fi
+  if [ "$2" = Dark ]; then local c=("#34C759" "#A3D139" "#FFCC00" "#FF9500" "#FF3B30")
+  else                     local c=("#248A3D" "#5E8C00" "#A87B00" "#C95F00" "#D70015")
+  fi
+  echo "${c[i]}"
 }
 fmt_dur() {
   local s=$1; [ "$s" -le 0 ] && { echo "now"; return; }
@@ -97,8 +104,18 @@ short_left() {
   else echo "$(( (s + 43200) / 86400 ))d"
   fi
 }
-appearance=${OS_APPEARANCE:-$(defaults read -g AppleInterfaceStyle 2>/dev/null || echo Light)}
-seg() { [ "$stale" = 1 ] && echo "~" || hex_for "$1"; }
+renderer="$HOME/.config/swiftbar/bin/menubar-text"
+# Build the renderer from its source on first run (or after the source changes).
+if [ ! -x "$renderer" ] || [ "$renderer.swift" -nt "$renderer" ]; then
+  swiftc=$(command -v swiftc || xcrun -f swiftc 2>/dev/null)
+  [ -n "$swiftc" ] && "$swiftc" -O "$renderer.swift" -o "$renderer.tmp" 2>/dev/null \
+    && mv -f "$renderer.tmp" "$renderer"
+fi
+# The dropdown follows the system theme, but the menu bar follows the wallpaper
+# (macOS 26+), so ask the renderer what the menu bar actually looks like.
+os_appearance=${OS_APPEARANCE:-$(defaults read -g AppleInterfaceStyle 2>/dev/null || echo Light)}
+bar_appearance=$("$renderer" --appearance 2>/dev/null) || bar_appearance=$os_appearance
+seg() { [ "$stale" = 1 ] && echo "~" || hex_for "$1" "$bar_appearance"; }
 parts=("✳ " "-")
 if [ -n "$p5" ]; then
   parts+=("${p5}%" "$(seg "$p5")")
@@ -109,29 +126,22 @@ if [ -n "$p7" ]; then
   parts+=("${p7}%" "$(seg "$p7")")
   [ -n "$r7" ] && parts+=(" ($(short_left "$r7"))" "~")
 fi
-renderer="$HOME/.config/swiftbar/bin/menubar-text"
-# Build the renderer from its source on first run (or after the source changes).
-if [ ! -x "$renderer" ] || [ "$renderer.swift" -nt "$renderer" ]; then
-  swiftc=$(command -v swiftc || xcrun -f swiftc 2>/dev/null)
-  [ -n "$swiftc" ] && "$swiftc" -O "$renderer.swift" -o "$renderer.tmp" 2>/dev/null \
-    && mv -f "$renderer.tmp" "$renderer"
-fi
-if img=$("$renderer" "$appearance" "${parts[@]}" 2>/dev/null) && [ -n "$img" ]; then
+if img=$("$renderer" "$bar_appearance" "${parts[@]}" 2>/dev/null) && [ -n "$img" ]; then
   echo "| image=$img"
 else  # renderer missing: plain text, colored by the higher of the two
   plain=""; for ((k=0; k<${#parts[@]}; k+=2)); do plain+="${parts[k]}"; done
   worst=$(( ${p5:-0} > ${p7:-0} ? ${p5:-0} : ${p7:-0} ))
-  echo "$plain | color=$(hex_for "$worst")"
+  echo "$plain | color=$(hex_for "$worst" "$bar_appearance")"
 fi
 
 # --- Dropdown ----------------------------------------------------------------
 echo "---"
 if [ -n "$p5" ]; then
-  echo "Current session (5h): ${p5}% | color=$(hex_for "$p5")"
+  echo "Current session (5h): ${p5}% | color=$(hex_for "$p5" "$os_appearance")"
   [ -n "$r5" ] && echo "--Resets in $(fmt_dur $(( r5 - now ))) ($(date -r "$r5" '+%a %H:%M'))"
 fi
 if [ -n "$p7" ]; then
-  echo "Weekly (7d): ${p7}% | color=$(hex_for "$p7")"
+  echo "Weekly (7d): ${p7}% | color=$(hex_for "$p7" "$os_appearance")"
   [ -n "$r7" ] && echo "--Resets in $(fmt_dur $(( r7 - now ))) ($(date -r "$r7" '+%a %H:%M'))"
 fi
 if [ "$src" = api ]; then
@@ -139,7 +149,7 @@ if [ "$src" = api ]; then
   jq -r '.data.limits[]? | select(.kind == "weekly_scoped") |
          "\(.scope.model.display_name // .scope.surface // "scoped")\t\(.percent)"' "$api_cache" 2>/dev/null |
   while IFS=$'\t' read -r name pct; do
-    echo "Weekly ($name): ${pct}% | color=$(hex_for "$pct")"
+    echo "Weekly ($name): ${pct}% | color=$(hex_for "$pct" "$os_appearance")"
   done
 fi
 echo "---"
