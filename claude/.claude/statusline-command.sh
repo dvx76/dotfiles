@@ -60,6 +60,13 @@ fi
 # Rate limits appear only for Pro/Max, after the first API response.
 five_h=$(printf '%s' "$input" | jq -r '.rate_limits.five_hour.used_percentage // empty')
 week=$(printf '%s' "$input" | jq -r '.rate_limits.seven_day.used_percentage // empty')
+
+# Cache rate limits for the SwiftBar menu bar plugin (claude-usage.1m.sh).
+if [ -n "$five_h$week" ]; then
+  cache="$HOME/.claude/rate-limits-cache.json"
+  printf '%s' "$input" | jq -c --argjson now "$(date +%s)" '{updated: $now, rate_limits}' \
+    > "$cache.$$" 2>/dev/null && mv -f "$cache.$$" "$cache"
+fi
 right=""
 right_c=""
 if [ -n "$five_h" ]; then
