@@ -9,7 +9,7 @@ sudo apt install stow
 git clone git@gitlab.com:dvx76/dotfiles.git .dotfiles
 cd .dotfiles
 stow zsh git tmux vim rex
-stow --no-folding nvim worktrunk herdr claude
+stow --no-folding nvim worktrunk herdr
 stow --no-folding swiftbar   # macOS only
 
 cat > ~/.gitconfig.local <<EOF
@@ -18,6 +18,29 @@ cat > ~/.gitconfig.local <<EOF
         email = ...
 EOF
 ```
+
+## Claude Code
+
+Shared Claude Code settings (status line, attribution) are installed as
+*managed* settings, so `~/.claude/settings.json` stays a plain, machine-local
+file that Claude Code is free to rewrite. The `claude-managed` package is
+stowed into the system managed-settings directory. Claude Code loads every
+`*.json` in `managed-settings.d/` and ignores other files, so the status line
+script lives alongside the settings file.
+
+```
+# Linux
+sudo mkdir -p /etc/claude-code
+sudo stow --no-folding -t /etc/claude-code claude-managed
+
+# macOS
+sudo mkdir -p "/Library/Application Support/ClaudeCode"
+sudo stow --no-folding -t "/Library/Application Support/ClaudeCode" claude-managed
+```
+
+Managed settings take precedence over user settings and cannot be overridden
+per machine, so keep only settings meant for every machine here. Verify with
+`/status` inside Claude Code.
 
 All packages mirror paths under `$HOME`, so no explicit Stow target is needed.
 Use `--no-folding` for the `.config` packages to keep runtime state outside the

@@ -1,0 +1,10 @@
+{
+  "attribution": {
+    "commit": "",
+    "pr": ""
+  },
+  "statusLine": {
+    "type": "command",
+    "command": "f=/etc/claude-code/managed-settings.d/statusline.sh; [ -r \"$f\" ] || f=\"/Library/Application Support/ClaudeCode/managed-settings.d/statusline.sh\"; exec bash \"$f\""
+  }
+}

@@ -5,9 +5,6 @@
 /herdr/.config/herdr/session.json
 /herdr/.config/herdr/plugins/github/
 
-# Re-include the Claude Code package (ignored globally via ~/.gitignore).
-!/claude/.claude/
-
 # macOS Finder metadata.
 .DS_Store
 
